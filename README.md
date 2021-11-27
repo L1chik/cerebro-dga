@@ -27,6 +27,10 @@
 2. roc_auc_score: 0.998
 <!-- #endregion -->
 
+# Образ Docker для Tensorflow
+1. cerebro-dga/
+2. docker run --gpus all -p 9999:8888 -it --rm -v /cerebro-dga:/app nvcr.io/nvidia/tensorflow:21.11-tf2-py3
+
 ```python
 
 ```
