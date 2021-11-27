@@ -2,17 +2,21 @@ import pandas as pd
 import numpy as np
 import warnings
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
 import sys
 import re
-from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score, average_precision_score, roc_auc_score
+from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score, average_precision_score, \
+    roc_auc_score
 from multi_sgd.predict import one_site_check
 from multi_sgd.prepareone import preprocessing_csv
 from multi_sgd.predict import model_eval_sgd
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+
 def warn(*args, **kwargs):
     pass
+
 
 warnings.warn = warn
 
@@ -34,7 +38,6 @@ def _pad(domain, max_length=63):
 # Функция по преобразованию домена
 def pad_domain(data, pad_fn=_pad):
     data['domain'] = data['domain'].map(pad_fn)
-    #     data.to_csv('data_bin_pad.csv', index=False)
 
     return data
 
@@ -51,24 +54,19 @@ def _split_domain(domain, sep='?'):
 
 
 def split_domain(data, split_fn=_split_domain, sep='?'):
-    data = pd.concat([pd.DataFrame(data['domain'].map(split_fn).values),
-                      data['subclass']], axis=1)
-
+    data = pd.concat([pd.DataFrame(data['domain'].map(split_fn).values), data['subclass']], axis=1)
     data.columns = ['domain', 'subclass']
 
     cols = ['domain%d' % d for d in range(0, 63)]
     data[cols] = data['domain'].str.split(sep, expand=True)
     data = data[cols + ['subclass']]
-    #     data.to_csv('model_test/data_split.csv', index=False)
 
     return data
 
 
 def id_encoding(data, dictionary, embeding_cols):
-    data[embeding_cols] = data[embeding_cols] \
-        .apply(lambda x: x.map(dictionary))
+    data[embeding_cols] = data[embeding_cols].apply(lambda x: x.map(dictionary))
     data = data[embeding_cols + ['subclass']]
-    #     data.to_csv('bin_data\./bin_data_encode.csv', index=False)
 
     return data
 
@@ -116,6 +114,7 @@ def helped(data: str or pd.DataFrame, model='gru') -> pd.DataFrame:
 
         if model == 'gru':
             res = resd(r'./checkpoint', x)[0][0]
+
         elif model == 'lstm':
             res = resd(r'./checkpointLSTM', x)[0][0]
 
